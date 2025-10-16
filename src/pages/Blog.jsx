@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import PostList from '../components/PostList';
 import NewPost from '../components/NewPost';
 import samplePosts from '../data/samplePosts';
+import { PostsAPI } from '../services/api';
 import '../blog.css';
 import { useUser } from '../contexts/UserContext';
 import RequireAuth from '../components/RequireAuth';
@@ -24,29 +25,42 @@ function BlogHome({ posts, onAdd, user, onDelete, currentUserEmail }) {
 export default function Blog() {
   const { user, logout } = useUser();
 
-  const [posts, setPosts] = useState(() => {
-    try {
-      const raw = localStorage.getItem('blog_posts');
-      return raw ? JSON.parse(raw) : samplePosts;
-    } catch {
-      return samplePosts;
-    }
-  });
+  const [posts, setPosts] = useState(samplePosts);
 
   useEffect(() => {
-    localStorage.setItem('blog_posts', JSON.stringify(posts));
-  }, [posts]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const list = await PostsAPI.list();
+        if (!cancelled) setPosts(list.map((p) => ({ id: p.id, title: p.title, content: p.content, author: p.author || 'Anonymous' })));
+      } catch {
+        // fallback to existing sample/local posts if API not reachable
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const navigate = useNavigate();
 
-  const addPost = (title, content) => {
-    const p = { id: Date.now(), title, content, author: user?.name || 'Anonymous', authorEmail: user?.email || null };
-    setPosts((s) => [p, ...s]);
+  const addPost = async (title, content) => {
+    try {
+      const created = await PostsAPI.create({ title, content }, /* token */ undefined);
+      const p = { id: created.post?.id || created.id, title: created.post?.title || title, content: created.post?.content || content, author: user?.name || 'Anonymous', authorEmail: user?.email || null };
+      setPosts((s) => [p, ...s]);
+    } catch {
+      const p = { id: Date.now(), title, content, author: user?.name || 'Anonymous', authorEmail: user?.email || null };
+      setPosts((s) => [p, ...s]);
+    }
     navigate('/');
   };
 
-  const deletePost = (id) => {
+  const deletePost = async (id) => {
     if (!window.confirm('Delete this post?')) return;
+    try {
+      await PostsAPI.remove(id, /* token */ undefined);
+    } catch {
+      // ignore API failure, still remove locally for demo UX
+    }
     setPosts((s) => s.filter((p) => p.id !== id));
   };
 

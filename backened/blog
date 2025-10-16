@@ -1,0 +1,8 @@
+
+cd C:\projects\my-blog\backened
+
+
+uvicorn main:app --reload
+
+
+uvicorn backened.main:app --reload --port 8000
