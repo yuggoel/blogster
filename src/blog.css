@@ -1,0 +1,45 @@
+/* Blog styles — improved visuals */
+:root { --max-width: 1100px; --accent: #2563eb; --muted: #6b7280; --card-bg: #ffffff; --surface: #f8fafc; }
+.blog-root { max-width: var(--max-width); margin: 32px auto; padding: 0 18px; }
+.blog-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.profile { display:flex; align-items:center; gap:14px; }
+.profile img { width:56px; height:56px; border-radius:12px; object-fit:cover; box-shadow:0 4px 14px rgba(16,24,40,0.06); }
+.profile-name { font-weight:700; font-size:1.05rem; color:#0f172a; }
+.logout { background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+
+.layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items:start; }
+
+.posts { display:flex; flex-direction:column; gap:18px; }
+.post { position: relative; background:transparent; padding:18px; border-radius:6px; box-shadow:none; border:0; }
+.post-title { margin:0 0 8px 0; font-size:1.15rem; color:#0f172a; }
+.post-meta { font-size:0.85rem; color:var(--muted); margin-bottom:10px; }
+.post-body { margin:0; color:#111827; line-height:1.6; }
+
+.post-delete { position: absolute; right: 18px; top: 12px; background: transparent; border: none; color: #7f1d1d; font-size: 18px; cursor: pointer; opacity: 0.7; }
+.post-delete:hover { opacity: 1; transform: scale(1.05); }
+
+
+.card { background: transparent; border-radius:8px; padding:14px; box-shadow:none; border:0; }
+
+.new-post input, .new-post textarea, .auth-card input { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #e6e9ee; }
+.new-post textarea { min-height:110px; }
+.new-post .actions { margin-top:10px; }
+.new-post button { background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+
+.empty { text-align:center; color:var(--muted); padding:18px; }
+
+.inline-create { margin-bottom: 20px; }
+.inline-create .new-post { background: var(--surface); }
+
+.new-post .actions button[disabled] { opacity: 0.6; cursor: not-allowed; }
+.new-post .actions button { min-width: 110px; }
+.new-post .published { color: #16a34a; font-weight:600; }
+
+/* Sidebar */
+.sidebar { display:flex; flex-direction:column; gap:12px; }
+.about { font-size:0.95rem; color:var(--muted); }
+
+@media (max-width: 880px) {
+	.layout { grid-template-columns: 1fr; }
+	.blog-root { padding: 0 12px; }
+}

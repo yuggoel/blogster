@@ -68,3 +68,20 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Local blog features added
+
+- Authentication: visit `/login` to enter a display name (avatar optional). The authenticated user is stored in localStorage.
+- Create posts: visit `/new` or click "New Post" in the nav to create and publish a post. New posts are saved to localStorage and shown on the home page.
+
+## Run locally (PowerShell)
+
+Open PowerShell in the project root and run:
+
+```powershell
+npm install
+npm start
+```
+
+Then open http://localhost:3000 in your browser.
+
