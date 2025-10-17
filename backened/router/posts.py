@@ -49,6 +49,31 @@ async def get_post(post_id: str):
     return obj_id_to_str(post)
 
 
+# ✏️ New endpoint — Edit (Update) a Post
+@router.put("/{post_id}")
+async def edit_post(post_id: str, updated_post: PostCreate, current_user: dict = Depends(get_current_user)):
+    """
+    Update a post — only the author can edit their own post.
+    """
+    if not is_valid_object_id(post_id):
+        raise HTTPException(status_code=400, detail="Invalid post id")
+
+    post = await posts_collection.find_one({"_id": ObjectId(post_id)})
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    if post["author_id"] != str(current_user["_id"]):
+        raise HTTPException(status_code=403, detail="Not authorized to edit this post")
+
+    await posts_collection.update_one(
+        {"_id": ObjectId(post_id)},
+        {"$set": {"title": updated_post.title, "content": updated_post.content}}
+    )
+
+    updated = await posts_collection.find_one({"_id": ObjectId(post_id)})
+    return {"msg": "Post updated successfully", "post": obj_id_to_str(updated)}
+
+
 @router.delete("/{post_id}")
 async def delete_post(post_id: str, current_user: dict = Depends(get_current_user)):
     if not is_valid_object_id(post_id):
@@ -60,5 +85,3 @@ async def delete_post(post_id: str, current_user: dict = Depends(get_current_use
         raise HTTPException(status_code=403, detail="Not authorized to delete this post")
     await posts_collection.delete_one({"_id": ObjectId(post_id)})
     return {"msg": "Post deleted successfully"}
-
-

@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-import os
 import jwt
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from .settings import settings
 
 
 # Password hashing
@@ -18,10 +18,10 @@ def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
 
 
-# JWT settings
-SECRET_KEY = os.getenv("SECRET_KEY", "mysecretkey")
+# JWT settings 
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
 
